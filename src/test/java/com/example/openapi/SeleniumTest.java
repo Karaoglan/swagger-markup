@@ -11,8 +11,6 @@ import org.openqa.selenium.support.ui.Select;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.concurrent.TimeUnit;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SeleniumTest {
@@ -28,7 +26,6 @@ public class SeleniumTest {
     public void setUp() throws Exception {
         System.setProperty("webdriver.gecko.driver","/Users/bk/Downloads/geckomozilla/geckodriver");
         driver = new FirefoxDriver();
-        //driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
     }
 
     @Test
