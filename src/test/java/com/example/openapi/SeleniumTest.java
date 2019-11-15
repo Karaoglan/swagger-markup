@@ -8,12 +8,16 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SeleniumTest {
+
+    @Value("${geckodriver.path}")
+    private String driverPath;
 
     public static final String HICRI_DAY = "25";
     public static final String HICRI_YEAR = "1219";
@@ -24,7 +28,7 @@ public class SeleniumTest {
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty("webdriver.gecko.driver","/Users/bk/Downloads/geckomozilla/geckodriver");
+        System.setProperty("webdriver.gecko.driver", driverPath);
         driver = new FirefoxDriver();
     }
 
