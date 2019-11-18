@@ -1,5 +1,8 @@
 package com.example.openapi;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum HicriMonthID {
     MUHARREM("1", "M"),
     SAFER("2", "S"),
@@ -14,8 +17,16 @@ public enum HicriMonthID {
     ZILKADE("11", "ZA"),
     ZILHICCE("12", "Z");
 
-    private String value;
-    private String code;
+    private static final Map<String, HicriMonthID> BY_CODE = new HashMap<>();
+
+    private final String value;
+    private final String code;
+
+    static {
+        for (HicriMonthID e: values()) {
+            BY_CODE.put(e.code, e);
+        }
+    }
 
     HicriMonthID(String value, String code) {
         this.value = value;
@@ -28,5 +39,9 @@ public enum HicriMonthID {
 
     public String getCode() {
         return code;
+    }
+
+    public static HicriMonthID valueOfCode(String code) {
+        return BY_CODE.get(code);
     }
 }

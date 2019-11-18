@@ -32,13 +32,13 @@ public class SeleniumTest {
 
     private String HICRI_DAY = "25";
     private String HICRI_YEAR = "1219";
-    public static final String CALENDAR_CODE = CalendarOption.HICRI.getCode();
+    private static final String CALENDAR_CODE = CalendarOption.HICRI.getCode();
     private String HICRI_MONTH_CODE = HicriMonthID.ZILHICCE.getCode();
 
     private WebDriver driver;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         System.setProperty("webdriver.gecko.driver", driverPath);
         driver = new FirefoxDriver();
     }
@@ -112,7 +112,7 @@ public class SeleniumTest {
                 String[] date = cell.getStringCellValue().split("-");
                 HICRI_YEAR = date[0];
                 HICRI_DAY = date[1];
-                HICRI_MONTH_CODE = HicriMonthID.va.date[2];
+                HICRI_MONTH_CODE = HicriMonthID.valueOfCode(date[2]).getCode();
                 callWebsite();
 
                 index++;
