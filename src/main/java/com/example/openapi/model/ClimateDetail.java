@@ -3,10 +3,7 @@ package com.example.openapi.model;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
@@ -17,6 +14,7 @@ public class ClimateDetail {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Date date;
+    @Column(length = 2000)
     private String text;
     private String place;
     private String pageNumber;
@@ -24,4 +22,7 @@ public class ClimateDetail {
     private String author;
     private String publishedBy;
     private String publishedDate;
+    private boolean yearExist;
+    private boolean monthExist;
+    private boolean dayExist;
 }

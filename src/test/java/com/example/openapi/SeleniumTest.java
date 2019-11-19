@@ -3,6 +3,7 @@ package com.example.openapi;
 import com.example.openapi.model.CalendarOption;
 import com.example.openapi.model.ClimateDetail;
 import com.example.openapi.model.HicriMonthID;
+import com.example.openapi.model.TurkishMonths;
 import com.example.openapi.repository.ClimateDetailRepository;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,10 +26,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SeleniumTest {
+
+    @Autowired
+    private ClimateDetailRepository repository;
 
     @Value("${geckodriver.path}")
     private String driverPath;
@@ -36,13 +43,14 @@ public class SeleniumTest {
     @Value("${sheets.path}")
     private String SHEETS_PATH;
 
-    @Autowired
-    private ClimateDetailRepository repository;
-
-    private String HICRI_DAY = "25";
-    private String HICRI_YEAR = "1219";
+    private static final String QUESTION_MARK = "?";
     private static final String CALENDAR_CODE = CalendarOption.HICRI.getCode();
     private HicriMonthID HICRI_MONTH_CODE;
+
+    private static String YEAR;
+    private static String MONTH;
+    private static String DAY;
+
 
     private WebDriver driver;
 
@@ -66,8 +74,8 @@ public class SeleniumTest {
         Select monthSelect = new Select(driver.findElement(By.xpath("/html/body/center/form/table[1]/tbody/tr[2]/td[2]/select")));
         Select calendarSelect = new Select(driver.findElement(By.xpath("/html/body/center/form/table[1]/tbody/tr[3]/td[1]/select")));
 
-        dayArea.sendKeys(HICRI_DAY);
-        yearArea.sendKeys(HICRI_YEAR);
+        dayArea.sendKeys(DAY);
+        yearArea.sendKeys(YEAR);
 
         calendarSelect.selectByValue(CALENDAR_CODE);
 
@@ -85,6 +93,9 @@ public class SeleniumTest {
         System.out.println("------------------------------");
         System.out.println(toMiladiDay + " " + toMiladiMonth + " " + toMiladiYear + " / " + toMiladiDayName);
         System.out.println("------------------------------");
+        YEAR = toMiladiYear.trim();
+        MONTH = TurkishMonths.valueOf(toMiladiMonth.trim().toUpperCase()).getCode();
+        DAY = toMiladiDay.trim();
     }
 
     private void readExcel() {
@@ -132,42 +143,60 @@ public class SeleniumTest {
                     break;
                 }
 
-                String year = date[0];
-                String month = date[1];
-                String day = date[2];
+                YEAR = date[0].trim();
+                MONTH = date[1].trim();
+                DAY = date[2].trim();
+
+                boolean dayExist = !DAY.contains(QUESTION_MARK);
+                boolean monthExist = !MONTH.contains(QUESTION_MARK);
+                boolean yearExist = !YEAR.contains(QUESTION_MARK);
+
                 boolean isHicriYear = true;
 
-                HICRI_MONTH_CODE = HicriMonthID.valueOfCode(month);
+                HICRI_MONTH_CODE = HicriMonthID.valueOfCode(MONTH);
 
                 if (HICRI_MONTH_CODE == null) {
                     isHicriYear = false;
-                    System.out.println("+++");
-                    System.out.println(year + " " + month + " " + day);
-                    System.out.println("verilen tarih miladi bir tarih");
                 }
 
-                if (isHicriYear && (!year.equals("?") && !day.equals("?"))) {
-                    HICRI_YEAR = year;
-                    HICRI_DAY = day;
+                if (isHicriYear && dayExist && monthExist && yearExist) {
                     callWebsite();
-                } else {
-
-                    System.out.println();
-                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    System.out.println(year + " " + month + " " + day);
-                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
                 }
 
+                SimpleDateFormat sdf = new SimpleDateFormat(
+                        "yyyy-MM-dd");
+
+                Calendar cal = Calendar.getInstance();
+
+                cal.set(Calendar.YEAR,
+                        (yearExist ? Integer.parseInt(YEAR) : 1000)
+                );
+
+                try {
+                    cal.set(Calendar.MONTH,
+                            (monthExist ? Integer.parseInt(MONTH) - 1 : 0)
+                    ); // <-- months starts at 0.
+                } catch (NumberFormatException e) {
+                    cal.set(Calendar.MONTH, 0);
+                }
+                cal.set(Calendar.DAY_OF_MONTH,
+                        (dayExist ? Integer.parseInt(DAY) : 1)
+                );
+
+                Date rowDate = new Date(cal.getTimeInMillis());
 
                 ClimateDetail climateDetail = ClimateDetail.builder()
+                        .date(rowDate)
                         .author(authorCell)
                         .bookName(bookNameCell)
                         .pageNumber(pageNumberCell)
                         .place(placeCell)
                         .publishedBy(publishedByCell)
                         .publishedDate(publishedDateCell)
-                        .text(textCell).build();
+                        .text(textCell)
+                        .dayExist(dayExist)
+                        .monthExist(monthExist)
+                        .yearExist(yearExist).build();
 
                 repository.save(climateDetail);
 
