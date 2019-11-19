@@ -1,4 +1,4 @@
-package com.example.openapi;
+package com.example.openapi.model;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,12 @@
 package com.example.openapi;
 
+import com.example.openapi.model.CalendarOption;
+import com.example.openapi.model.ClimateDetail;
+import com.example.openapi.model.HicriMonthID;
+import com.example.openapi.repository.ClimateDetailRepository;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,6 +18,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -30,10 +36,13 @@ public class SeleniumTest {
     @Value("${sheets.path}")
     private String SHEETS_PATH;
 
+    @Autowired
+    private ClimateDetailRepository repository;
+
     private String HICRI_DAY = "25";
     private String HICRI_YEAR = "1219";
     private static final String CALENDAR_CODE = CalendarOption.HICRI.getCode();
-    private String HICRI_MONTH_CODE = HicriMonthID.ZILHICCE.getCode();
+    private HicriMonthID HICRI_MONTH_CODE;
 
     private WebDriver driver;
 
@@ -62,7 +71,7 @@ public class SeleniumTest {
 
         calendarSelect.selectByValue(CALENDAR_CODE);
 
-        monthSelect.selectByValue(HICRI_MONTH_CODE);
+        monthSelect.selectByValue(HICRI_MONTH_CODE.getValue());
 
         convertButton.click();
 
@@ -71,7 +80,6 @@ public class SeleniumTest {
         String toMiladiYear = driver.findElement(By.xpath("/html/body/center/form/table[2]/tbody/tr[4]/td[1]")).getText();
         String toMiladiDayName = driver.findElement(By.xpath("/html/body/center/form/table[2]/tbody/tr[5]/td[2]")).getText();
 
-        System.out.println();
         System.out.println();
         System.out.println();
         System.out.println("------------------------------");
@@ -98,24 +106,73 @@ public class SeleniumTest {
 
             Sheet sheet  = workbook.getSheetAt(0); // Get Your Sheet.
 
+            System.out.println("number of rows : " + sheet.getLastRowNum());
             int index = 0;
             for (Row row : sheet) { // For each Row.
-                if (index == 3)
-                    break;
-
                 if (index == 0) {
                     index++;
                     continue;
                 }
-                Cell cell = row.getCell(0); // Get the Cell at the Index / Column you want.
-                System.out.println("--" + cell.getStringCellValue());
-                String[] date = cell.getStringCellValue().split("-");
-                HICRI_YEAR = date[0];
-                HICRI_DAY = date[1];
-                HICRI_MONTH_CODE = HicriMonthID.valueOfCode(date[2]).getCode();
-                callWebsite();
+                DataFormatter formatter = new DataFormatter();
+                Cell dateCell = row.getCell(0); // Get the Cell at the Index / Column you want.
+                String textCell = formatter.formatCellValue(row.getCell(1)); // Get the Cell at the Index / Column you want.
+                String placeCell = formatter.formatCellValue(row.getCell(2)); // Get the Cell at the Index / Column you want.
+                String pageNumberCell = formatter.formatCellValue(row.getCell(3));
+                String bookNameCell = formatter.formatCellValue(row.getCell(4)); // Get the Cell at the Index / Column you want.
+                String authorCell = formatter.formatCellValue(row.getCell(5)); // Get the Cell at the Index / Column you want.
+                String publishedByCell = formatter.formatCellValue(row.getCell(6)); // Get the Cell at the Index / Column you want.
+                String publishedDateCell = formatter.formatCellValue(row.getCell(7)); // Get the Cell at the Index / Column you want.
+
+                String[] date;
+
+                try {
+                     date = dateCell.getStringCellValue().split("-");
+                } catch (NullPointerException e) {
+                    // EOF
+                    break;
+                }
+
+                String year = date[0];
+                String month = date[1];
+                String day = date[2];
+                boolean isHicriYear = true;
+
+                HICRI_MONTH_CODE = HicriMonthID.valueOfCode(month);
+
+                if (HICRI_MONTH_CODE == null) {
+                    isHicriYear = false;
+                    System.out.println("+++");
+                    System.out.println(year + " " + month + " " + day);
+                    System.out.println("verilen tarih miladi bir tarih");
+                }
+
+                if (isHicriYear && (!year.equals("?") && !day.equals("?"))) {
+                    HICRI_YEAR = year;
+                    HICRI_DAY = day;
+                    callWebsite();
+                } else {
+
+                    System.out.println();
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println(year + " " + month + " " + day);
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+                }
+
+
+                ClimateDetail climateDetail = ClimateDetail.builder()
+                        .author(authorCell)
+                        .bookName(bookNameCell)
+                        .pageNumber(pageNumberCell)
+                        .place(placeCell)
+                        .publishedBy(publishedByCell)
+                        .publishedDate(publishedDateCell)
+                        .text(textCell).build();
+
+                repository.save(climateDetail);
 
                 index++;
+
             }
 
             // Closing the workbook

@@ -1,4 +1,4 @@
-package com.example.openapi;
+package com.example.openapi.model;
 
 public enum CalendarOption {
     MILADI("1"),
