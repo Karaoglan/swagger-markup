@@ -1,7 +1,9 @@
 package com.example.openapi.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -9,12 +11,14 @@ import java.sql.Date;
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClimateDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Date date;
-    @Column(length = 2000)
+    @Column(length = 10000)
     private String text;
     private String place;
     private String pageNumber;
