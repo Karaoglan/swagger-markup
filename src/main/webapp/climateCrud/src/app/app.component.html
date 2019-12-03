@@ -1,0 +1,47 @@
+<router-outlet></router-outlet>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6" style="text-align:center;">
+      <h3>1800' lü Yılların İstanbul İklim Bilgileri</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <br /><br />
+      <div class="table-responsive">
+
+
+        <form>
+          <div class="form-group form-inline">
+            Full text search: <input class="form-control ml-2" type="text" [formControl]="filter"/>
+          </div>
+        </form>
+
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Text</th>
+            <th scope="col" sortable="place" (sort)="onSort($event)">Place</th>
+            <th scope="col" sortable="date" (sort)="onSort($event)">Date</th>
+            <th scope="col" sortable="pageNumber" (sort)="onSort($event)">PageNumber</th>
+            <th scope="col" sortable="bookName" (sort)="onSort($event)">BookName</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of climateList; let i = index">
+            <th scope="row">{{ item.id }}</th>
+            <td>{{ item.text }}</td>
+            <td>{{ item.place }}</td>
+            <td>{{ item.date }}</td>
+            <td>{{ item.pageNumber }}</td>
+            <td>{{ item.bookName }}</td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
