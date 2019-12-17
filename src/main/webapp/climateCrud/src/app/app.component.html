@@ -1,47 +1,109 @@
-<router-outlet></router-outlet>
-
-<div class="container">
-  <div class="row">
-    <div class="col-md-6" style="text-align:center;">
-      <h3>1800' lü Yılların İstanbul İklim Bilgileri</h3>
-    </div>
+<mat-toolbar color="primary">
+  <div fxHide.gt-sm="true">
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
   </div>
-  <div class="row">
-    <div class="col-md-8">
-      <br /><br />
-      <div class="table-responsive">
+  <a mat-button class="companyName" routerLink="/">
+    <span>Site name</span>
+  </a>
+  <span class="example-spacer"></span>
+  <div fxHide.lt-md="true">
+    <a mat-button routerLink="/about-us">About us</a>
+    <a mat-button routerLink="/prices">Prices</a>
+    <a mat-button routerLink="/start-page">Start page</a>
+    <a mat-button routerLink="/offer">Offer</a>
+    <a mat-button routerLink="/contact">Contact</a>
+  </div>
+</mat-toolbar>
+<mat-sidenav-container fxFlexFill class="example-container">
+  <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
+    <div fxLayout="column">
+      <a mat-button routerLink="/about-us">About us</a>
+      <a mat-button routerLink="/prices">Prices</a>
+      <a mat-button routerLink="/start-page">Start page</a>
+      <a mat-button routerLink="/offer">Offer</a>
+      <a mat-button routerLink="/contact">Contact</a>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content fxFlexFill>
+    <router-outlet></router-outlet>
 
 
-        <form>
-          <div class="form-group form-inline">
-            Full text search: <input class="form-control ml-2" type="text" [formControl]="filter"/>
-          </div>
-        </form>
 
-        <table class="table table-striped">
-          <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Text</th>
-            <th scope="col" sortable="place" (sort)="onSort($event)">Place</th>
-            <th scope="col" sortable="date" (sort)="onSort($event)">Date</th>
-            <th scope="col" sortable="pageNumber" (sort)="onSort($event)">PageNumber</th>
-            <th scope="col" sortable="bookName" (sort)="onSort($event)">BookName</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let item of climateList; let i = index">
-            <th scope="row">{{ item.id }}</th>
-            <td>{{ item.text }}</td>
-            <td>{{ item.place }}</td>
-            <td>{{ item.date }}</td>
-            <td>{{ item.pageNumber }}</td>
-            <td>{{ item.bookName }}</td>
-          </tr>
-          </tbody>
-        </table>
 
+
+    <div *ngIf='(climates$ | async) as climates' class="container">
+
+      <div class="row">
+        <div class="col-md-6" style="text-align:center;">
+          <h3>1800' lü Yılların İstanbul İklim Bilgileri</h3>
+        </div>
       </div>
+      <!--<div class="row">
+        <div class="col-md-8">
+          <br /><br />
+          <div class="table-responsive">
+
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Text</th>
+                <th scope="col" sortable="place">Place</th>
+                <th scope="col" sortable="date">Date</th>
+                <th scope="col" sortable="pageNumber">PageNumber</th>
+                <th scope="col" sortable="bookName">BookName</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of climates; let i = index">
+                <th>{{ i }}</th>
+                <td>{{ item.text }}</td>
+                <td>{{ item.place }}</td>
+                <td>{{ item.date }}</td>
+                <td>{{ item.pageNumber }}</td>
+                <td>{{ item.bookName }}</td>
+              </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+      </div>-->
+
+
+
+      <mat-table [dataSource]="climates" class="mat-elevation-z8">
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+          <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
+          <mat-cell *matCellDef="let element; let i = index"> {{i}} </mat-cell>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="weight">
+          <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.weight}} </mat-cell>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="symbol">
+          <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
+      </mat-table>
+
     </div>
-  </div>
-</div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

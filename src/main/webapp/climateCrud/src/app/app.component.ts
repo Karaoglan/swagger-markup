@@ -1,48 +1,21 @@
-import {Component, Directive, EventEmitter, Input, Output, PipeTransform, QueryList, ViewChildren} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import { ClimateService } from 'src/app/services/climate.service';
-import {Observable} from "rxjs";
-//              [(ngModel)]="searchText"
+import {Observable, Subject} from 'rxjs';
+import {takeUntil} from "rxjs/operators";
+import {animate, state, style, transition, trigger} from "@angular/animations";
+
 export interface Climate {
   id: number;
   author: string;
   bookName: string;
-  date: Date;
-  dayExist: Boolean;
-  monthExist: Boolean;
+  date: string;
+  dayExist: boolean;
+  monthExist: boolean;
   pageNumber: number;
   place: string;
   publishedBy: string;
   text: string;
-  yearExist: Boolean;
-}
-
-export type SortDirection = 'asc' | 'desc' | '';
-const rotate: {[key: string]: SortDirection} = { 'asc': 'desc', 'desc': '', '': 'asc' };
-export const compare = (v1, v2) => v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
-
-export interface SortEvent {
-  column: string;
-  direction: SortDirection;
-}
-
-@Directive({
-  selector: 'th[sortable]',
-  host: {
-    '[class.asc]': 'direction === "asc"',
-    '[class.desc]': 'direction === "desc"',
-    '(click)': 'rotate()'
-  }
-})
-export class NgbdSortableHeader {
-
-  @Input() sortable: string;
-  @Input() direction: SortDirection = '';
-  @Output() sort = new EventEmitter<SortEvent>();
-
-  rotate() {
-    this.direction = rotate[this.direction];
-    this.sort.emit({column: this.sortable, direction: this.direction});
-  }
+  yearExist: boolean;
 }
 
 /*
@@ -61,28 +34,41 @@ yearExist: true
 
  */
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   title = 'AngularCRUDExample';
 
-  climateList: Observable<Climate[]>;
+  public _endSubscriptions$: Subject<boolean> = new Subject();
 
-  @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
+  columnsToDisplay = ['#', 'Text', 'Place', 'Date', 'PageNumber', 'BookName'];
+  expandedElement: Climate | null;
 
-  constructor(private climateService: ClimateService) {
-    this.getClimates();
-  }
+  /**
+   * Observable of the account state.
+   *
+   * @type {Observable<AccountModel>}
+   * @memberof AccountSystemHandler
+   */
+  public climates$: Observable<Climate[]> = this.climateService.getClimates()
+    .pipe(
+      takeUntil(this._endSubscriptions$)
+  );
 
-  getClimates() {
-    this.climateService.getClimates().subscribe(data => {
-      Object.assign(this.climateList, data);
-    }, error => {
-      console.log("Error while getting posts ", error);
-    });
+  constructor(private climateService: ClimateService) {}
+
+  public ngOnDestroy(): void {
+    this._endSubscriptions$.next(true);
+    this._endSubscriptions$.complete();
   }
 }

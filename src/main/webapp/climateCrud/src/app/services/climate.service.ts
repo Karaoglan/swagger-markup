@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {Climate} from "../app.component";
 import {Observable} from "rxjs";
+import {take} from "rxjs/operators";
 
 @Injectable()
 export class ClimateService{
@@ -14,7 +15,15 @@ export class ClimateService{
   getClimates(): Observable<Climate[]>{
     let header = new HttpHeaders();
     header.append('Content-Type', 'applications/json');
-    return this.http.get<Climate[]>(this.baseURL + "climates", { headers: header});
+    return this.http.get<Climate[]>(this.baseURL + "climates", { headers: header}).pipe(take(1));
   }
+
+
+  getClimatesWithSameDateMap(): Observable<Climate[]>{
+    let header = new HttpHeaders();
+    header.append('Content-Type', 'applications/json');
+    return this.http.get<Climate[]>(this.baseURL + "climatesSameDate", { headers: header}).pipe(take(1));
+  }
+
 
 }
