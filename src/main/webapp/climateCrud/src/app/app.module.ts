@@ -13,11 +13,18 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableModule} from '@angular/material/table';
-
+import {TextShrinkPipe} from "./table-text-shrink.pipe";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {CdkTableModule} from '@angular/cdk/table';
+import {CdkTreeModule} from '@angular/cdk/tree';
+import {CdkDetailRowDirective} from './cdk-detail-row.directive';
+import {MatInputModule} from "@angular/material/input";
 
 @NgModule({
   declarations: [
     AppComponent,
+    TextShrinkPipe,
+    CdkDetailRowDirective
   ],
   imports: [
     BrowserModule,
@@ -27,6 +34,10 @@ import {MatTableModule} from '@angular/material/table';
     MatIconModule,
     MatTableModule,
     MatButtonModule,
+    MatCheckboxModule,
+    MatInputModule,
+    CdkTableModule,
+    CdkTreeModule,
     FlexLayoutModule,
     MatToolbarModule,
     FormsModule,

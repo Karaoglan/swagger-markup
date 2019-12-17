@@ -5,105 +5,143 @@
     </button>
   </div>
   <a mat-button class="companyName" routerLink="/">
-    <span>Site name</span>
+    <span>Klima Tarihi</span>
   </a>
   <span class="example-spacer"></span>
   <div fxHide.lt-md="true">
-    <a mat-button routerLink="/about-us">About us</a>
-    <a mat-button routerLink="/prices">Prices</a>
-    <a mat-button routerLink="/start-page">Start page</a>
-    <a mat-button routerLink="/offer">Offer</a>
-    <a mat-button routerLink="/contact">Contact</a>
+    <a mat-button routerLink="/about-us">Home</a>
+    <a mat-button routerLink="/prices">Graphics</a>
   </div>
 </mat-toolbar>
 <mat-sidenav-container fxFlexFill class="example-container">
   <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
     <div fxLayout="column">
-      <a mat-button routerLink="/about-us">About us</a>
-      <a mat-button routerLink="/prices">Prices</a>
-      <a mat-button routerLink="/start-page">Start page</a>
-      <a mat-button routerLink="/offer">Offer</a>
-      <a mat-button routerLink="/contact">Contact</a>
+      <a mat-button routerLink="/about-us">Home</a>
+      <a mat-button routerLink="/about-us">Graphics</a>
     </div>
   </mat-sidenav>
   <mat-sidenav-content fxFlexFill>
     <router-outlet></router-outlet>
 
+    <div *ngIf='dataSource' class="container">
 
-
-
-
-    <div *ngIf='(climates$ | async) as climates' class="container">
-
-      <div class="row">
-        <div class="col-md-6" style="text-align:center;">
+      <div fxLayout="row" fxLayoutAlign="center">
+        <div >
           <h3>1800' lü Yılların İstanbul İklim Bilgileri</h3>
         </div>
       </div>
-      <!--<div class="row">
-        <div class="col-md-8">
-          <br /><br />
-          <div class="table-responsive">
-
-            <table class="table table-striped">
-              <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Text</th>
-                <th scope="col" sortable="place">Place</th>
-                <th scope="col" sortable="date">Date</th>
-                <th scope="col" sortable="pageNumber">PageNumber</th>
-                <th scope="col" sortable="bookName">BookName</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let item of climates; let i = index">
-                <th>{{ i }}</th>
-                <td>{{ item.text }}</td>
-                <td>{{ item.place }}</td>
-                <td>{{ item.date }}</td>
-                <td>{{ item.pageNumber }}</td>
-                <td>{{ item.bookName }}</td>
-              </tr>
-              </tbody>
-            </table>
-
-          </div>
+      <div fxLayout="row" fxLayoutAlign="start">
+        <div >
+          <h3> TOPLAM : {{dataSource.data.length}}</h3>
         </div>
-      </div>-->
+      </div>
 
+      <div flexLayout="row" fxLayoutAlign="end">
+        <form class="example-form">
+          <mat-form-field class="example-full-width">
+            <input matInput [(ngModel)]="searchText" [ngModelOptions]="{standalone: true}" (keyup)="applyFilter($event.target.value)" placeholder="Ara ...">
+          </mat-form-field>
+        </form>
+        <a mat-flat-button routerLink="." color="warn" (click)="filterOff()">
+          <mat-icon aria-hidden="false" aria-label="Example home icon">
+            cancel
+          </mat-icon> Filter Off | {{ 'YIL -' + yearCheck + ' | AY - ' + monthCheck + ' | GÜN - ' + dayCheck }}
+        </a>
+      </div>
 
-
-      <mat-table [dataSource]="climates" class="mat-elevation-z8">
+      <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <!-- Position Column -->
-        <ng-container matColumnDef="position">
-          <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
-          <mat-cell *matCellDef="let element; let i = index"> {{i}} </mat-cell>
+        <ng-container matColumnDef="#">
+          <mat-header-cell [style.flex]="'0 0 2%'" *matHeaderCellDef> No. </mat-header-cell>
+          <mat-cell [style.flex]="'0 0 2%'" *matCellDef="let element; let i = index"> {{i + 1}} </mat-cell>
         </ng-container>
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        <!-- Text Column -->
+        <ng-container matColumnDef="Text">
+          <mat-header-cell [style.flex]="'0 0 30%'" *matHeaderCellDef> Text </mat-header-cell>
+          <mat-cell [style.flex]="'0 0 30%'" *matCellDef="let element"> {{element.text | textShrink: 75 }} </mat-cell>
         </ng-container>
 
-        <!-- Weight Column -->
-        <ng-container matColumnDef="weight">
-          <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.weight}} </mat-cell>
+        <!-- Place Column -->
+        <ng-container matColumnDef="Place">
+          <mat-header-cell *matHeaderCellDef> Place </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.place | textShrink: 15 }} </mat-cell>
         </ng-container>
 
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="symbol">
-          <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
+        <!-- Date Column -->
+        <ng-container matColumnDef="Date">
+          <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.color]="'#' + '0000ff'"> {{element.date}} </mat-cell>
+        </ng-container>
+
+        <!-- pagenr Column -->
+        <ng-container matColumnDef="PageNumber">
+          <mat-header-cell *matHeaderCellDef> PageNr </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.pageNumber}} </mat-cell>
+        </ng-container>
+
+        <!-- bookName Column -->
+        <ng-container matColumnDef="BookName">
+          <mat-header-cell *matHeaderCellDef> BookName </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.bookName | textShrink: 15}} </mat-cell>
+        </ng-container>
+
+        //'Yazar', 'YayınEvi', 'Gün', 'Ay', 'Yıl'
+
+        <!--  yazar -->
+        <ng-container matColumnDef="Yazar">
+          <mat-header-cell *matHeaderCellDef> Yazar </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.color]="'#' + '0000ff'"> {{element.author}} </mat-cell>
+        </ng-container>
+
+        <!-- yayınevi -->
+        <ng-container matColumnDef="YayınEvi">
+          <mat-header-cell *matHeaderCellDef> YayınEvi </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.publishedBy | textShrink:15}} </mat-cell>
+        </ng-container>
+
+        <!-- yıl Column -->
+        <ng-container matColumnDef="Yıl">
+          <mat-header-cell *matHeaderCellDef><span>Yıl<mat-checkbox [(ngModel)]="yearCheck" (change)="dateClicked($event)"></mat-checkbox></span></mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" color="{{ element.yearExist ? 'primary': 'warn' }}">
+              {{ element.yearExist ? 'done' : 'close'}}
+            </mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <!-- ay Column -->
+        <ng-container matColumnDef="Ay">
+          <mat-header-cell *matHeaderCellDef><span>Ay<mat-checkbox [(ngModel)]="monthCheck" (change)="dateClicked($event)"></mat-checkbox></span></mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" color="{{ element.monthExist ? 'primary': 'warn' }}">
+              {{ element.monthExist ? 'done' : 'close'}}
+            </mat-icon>
+          </mat-cell>
+        </ng-container>
+
+        <!-- gün Column -->
+        <ng-container matColumnDef="Gün">
+          <mat-header-cell *matHeaderCellDef><span>Gün<mat-checkbox [(ngModel)]="dayCheck" (change)="dateClicked($event)"></mat-checkbox></span></mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" color="{{ element.dayExist ? 'primary': 'warn' }}">
+              {{ element.dayExist ? 'done' : 'close'}}
+            </mat-icon>
+          </mat-cell>
+
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
+        <mat-row *matRowDef="let row; columns: columnsToDisplay;" matRipple class="element-row" [cdkDetailRow]="row" [cdkDetailRowTpl]="tpl"></mat-row>
       </mat-table>
 
     </div>
 
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+<ng-template #tpl let-element>
+  <div class="mat-row detail-row" [@detailExpand] style="overflow: hidden">
+    The text for {{element.id}} is {{element.text}}
+  </div>
+</ng-template>
