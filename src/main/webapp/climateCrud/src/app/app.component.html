@@ -141,7 +141,11 @@
 </mat-sidenav-container>
 
 <ng-template #tpl let-element>
-  <div class="mat-row detail-row" [@detailExpand] style="overflow: hidden">
-    The text for {{element.id}} is {{element.text}}
-  </div>
+
+
+  <ng-container>
+    <div class="mat-row detail-row" [@detailExpand] style="overflow: hidden">
+      {{element.text}}
+    </div>
+  </ng-container>
 </ng-template>
