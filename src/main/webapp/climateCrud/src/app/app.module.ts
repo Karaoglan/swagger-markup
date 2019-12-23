@@ -19,10 +19,16 @@ import {CdkTableModule} from '@angular/cdk/table';
 import {CdkTreeModule} from '@angular/cdk/tree';
 import {CdkDetailRowDirective} from './cdk-detail-row.directive';
 import {MatInputModule} from "@angular/material/input";
+import {GraphicsComponent} from "./graphics/graphics.component";
+import {MatCardModule} from "@angular/material/card";
+import {ClimatesComponent} from "./climates/climates.component";
+import { HighchartsChartModule } from 'highcharts-angular';
 
 @NgModule({
   declarations: [
     AppComponent,
+    GraphicsComponent,
+    ClimatesComponent,
     TextShrinkPipe,
     CdkDetailRowDirective
   ],
@@ -32,8 +38,10 @@ import {MatInputModule} from "@angular/material/input";
     MatSidenavModule,
     HttpClientModule,
     MatIconModule,
+    MatCardModule,
     MatTableModule,
     MatButtonModule,
+    HighchartsChartModule,
     MatCheckboxModule,
     MatInputModule,
     CdkTableModule,
