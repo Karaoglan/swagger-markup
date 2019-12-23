@@ -1,9 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import { ClimateService } from 'src/app/services/climate.service';
 import * as Highcharts from 'highcharts';
 import {from, Observable, Subject} from "rxjs";
 import {Climate} from "../climates/climates.component";
-import {groupBy, map, mergeMap, takeUntil, toArray} from "rxjs/operators";
+import {groupBy, mergeMap, takeUntil, toArray} from "rxjs/operators";
 
 /*
 author: "Federico Gravina"
@@ -25,7 +25,7 @@ yearExist: true
   selector: 'app-graphics',
   templateUrl: './graphics.component.html',
 })
-export class GraphicsComponent implements OnInit, OnDestroy {
+export class GraphicsComponent implements OnDestroy {
   title = 'IKLIM PROJESI';
 
   public _endSubscriptions$: Subject<boolean> = new Subject();
@@ -33,6 +33,8 @@ export class GraphicsComponent implements OnInit, OnDestroy {
   Highcharts = Highcharts;
 
   chartOptions: {};
+
+  chartDateOptions: {};
 
   bookNameMap = new Map();
 
@@ -88,6 +90,19 @@ export class GraphicsComponent implements OnInit, OnDestroy {
       "yearExist": true,
       "monthExist": true,
       "dayExist": false
+    },
+    {
+      "id": 5,
+      "date": "1788-06-08",
+      "text": "8 Haziran’ da hareketi olanasızlaştıracak derecee güney rüzgarı etili oldu. ",
+      "place": "İstanbul/Galata",
+      "pageNumber": "36",
+      "bookName": "book2",
+      "author": "Federico Gravina",
+      "publishedBy": "YKY",
+      "yearExist": true,
+      "monthExist": true,
+      "dayExist": true
     }
   ];
 
@@ -102,45 +117,90 @@ export class GraphicsComponent implements OnInit, OnDestroy {
     );
 
   constructor(private climateService: ClimateService) {
-    /*this.climates$.pipe(
-      //map(climate => console.log(climate))
-      groupBy(climate => climate.bookName),
-      mergeMap(group => group.pipe(toArray()))
-    ).subscribe((data) => console.log(data));*/
+    this.climates$.subscribe(data => {
+      this.climates = data;
+
+      from(this.climates).pipe(
+        groupBy(climate => climate.bookName),
+        mergeMap(group => group.pipe(toArray()))
+      ).subscribe((data) => this.bookNameMap.set(data[0].bookName, data.length));
 
 
-    from(this.climates).pipe(
-      groupBy(climate => climate.bookName),
-      mergeMap(group => group.pipe(toArray()))
-    ).subscribe((data) => console.log(data));
-
+      this.generateBookNameGraph();
+      this.generateDateGraph();
+    });
   }
 
-  // data: [{
-  //           name: 'Chrome',
-  //           y: 61.41,
-  //           sliced: true,
-  //           selected: true
-  //         }, {
-  //           name: 'Internet Explorer',
-  //           y: 11.84
-  //         }, {
-  //           name: 'Firefox',
-  //           y: 10.85
-  //         }, {
-  //           name: 'Edge',
-  //           y: 4.67
-  //         }, {
-  //           name: 'Safari',
-  //           y: 4.18
-  //         }, {
-  //           name: 'Other',
-  //           y: 7.05
-  //         }]
+  public generateDateGraph() {
 
-  ngOnInit() {
+    let dateGraphData = [
+      ['Yıl/Ay/Gün', this.climates.filter(climate => climate.dayExist && climate.monthExist && climate.yearExist).length],
+      ['Yıl ve Ay', this.climates.filter(climate => !climate.dayExist && climate.monthExist && climate.yearExist).length],
+      ['Sadece Yıl', this.climates.filter(climate => !climate.dayExist && !climate.monthExist && climate.yearExist).length],
+      ['TOPLAM', this.climates.length]
+    ];
 
+    this.chartDateOptions = {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Tarih verilerine göre değerlendirme'
+      },
+      xAxis: {
+        type: 'category',
+        allowDecimals: false,
+        labels: {
+          rotation: -45,
+          style: {
+            fontSize: '13px',
+            fontFamily: 'Verdana, sans-serif'
+          }
+        }
+      },
+      yAxis: {
+        allowDecimals: false,
+        min: 0,
+        title: {
+          text: 'Veri Sayısı'
+        }
+      },
+      legend: {
+        enabled: false
+      },
+      tooltip: {
+        formatter: function () {
+          return this.series.name + ': ' + this.y + '<br/>';
+        }
+      },
+      series: [{
+        name: 'Tarih',
+        data: dateGraphData,
+        dataLabels: {
+          enabled: true,
+          rotation: -90,
+          color: '#FFFFFF',
+          align: 'right',
+          format: '{point.y}', // one decimal
+          y: 10, // 10 pixels down from the top
+          style: {
+            fontSize: '13px',
+            fontFamily: 'Verdana, sans-serif'
+          }
+        }
+      }]
+    };
+  }
+
+  public generateBookNameGraph() {
     let graphData = [];
+
+    for (let [key, value] of this.bookNameMap) {
+      graphData.push({
+        name: key,
+        y: (value / this.climates.length) * 100
+      })
+    }
 
 
     this.chartOptions = {
@@ -151,10 +211,10 @@ export class GraphicsComponent implements OnInit, OnDestroy {
         type: 'pie'
       },
       title: {
-        text: 'Browser market shares in January, 2018'
+        text: 'Kitap ismine göre gruplama'
       },
       tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        pointFormat: '{series.name}: {(this.climates.length * point.percentage) / 100} <b>{point.percentage:.1f}%</b>'
       },
       plotOptions: {
         pie: {
@@ -169,27 +229,7 @@ export class GraphicsComponent implements OnInit, OnDestroy {
       series: [{
         name: 'Brands',
         colorByPoint: true,
-        data: [{
-          name: 'Chrome',
-          y: 61.41,
-          sliced: true,
-          selected: true
-        }, {
-          name: 'Internet Explorer',
-          y: 11.84
-        }, {
-          name: 'Firefox',
-          y: 10.85
-        }, {
-          name: 'Edge',
-          y: 4.67
-        }, {
-          name: 'Safari',
-          y: 4.18
-        }, {
-          name: 'Other',
-          y: 7.05
-        }]
+        data: graphData
       }]
     }
   }

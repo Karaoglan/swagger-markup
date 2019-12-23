@@ -1,5 +1,5 @@
 <mat-card>
-  <div *ngIf='dataSource' class="container">
+  <div class="container">
 
     <div fxLayout="row" fxLayoutAlign="center">
       <div >
@@ -8,7 +8,7 @@
     </div>
     <div fxLayout="row" fxLayoutAlign="start">
       <div >
-        <h3> TOPLAM : {{dataSource.data.length}}</h3>
+        <h3> TOPLAM : {{dataSource?.data?.length}}</h3>
       </div>
     </div>
 
@@ -23,56 +23,58 @@
           cancel
         </mat-icon> Filter Off | {{ 'YIL -' + yearCheck + ' | AY - ' + monthCheck + ' | GÜN - ' + dayCheck }}
       </a>
+
+      <a mat-flat-button routerLink="." color="primary" (click)="showSameDates()">
+        Aynı Tarihleri Göster Y/A/G
+      </a>
     </div>
 
-    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
       <!-- Position Column -->
       <ng-container matColumnDef="#">
-        <mat-header-cell [style.flex]="'0 0 2%'" *matHeaderCellDef> No. </mat-header-cell>
+        <mat-header-cell [style.flex]="'0 0 2%'" *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
         <mat-cell [style.flex]="'0 0 2%'" *matCellDef="let element; let i = index"> {{i + 1}} </mat-cell>
       </ng-container>
 
       <!-- Text Column -->
-      <ng-container matColumnDef="Text">
-        <mat-header-cell [style.flex]="'0 0 30%'" *matHeaderCellDef> Text </mat-header-cell>
+      <ng-container matColumnDef="text">
+        <mat-header-cell [style.flex]="'0 0 30%'" *matHeaderCellDef mat-sort-header> text </mat-header-cell>
         <mat-cell [style.flex]="'0 0 30%'" *matCellDef="let element"> {{element.text | textShrink: 75 }} </mat-cell>
       </ng-container>
 
       <!-- Place Column -->
-      <ng-container matColumnDef="Place">
-        <mat-header-cell *matHeaderCellDef> Place </mat-header-cell>
+      <ng-container matColumnDef="place">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Place </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.place | textShrink: 15 }} </mat-cell>
       </ng-container>
 
       <!-- Date Column -->
-      <ng-container matColumnDef="Date">
-        <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
         <mat-cell *matCellDef="let element" [style.color]="'#' + '0000ff'"> {{element.date}} </mat-cell>
       </ng-container>
 
       <!-- pagenr Column -->
       <ng-container matColumnDef="PageNumber">
-        <mat-header-cell *matHeaderCellDef> PageNr </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> PageNr </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.pageNumber}} </mat-cell>
       </ng-container>
 
       <!-- bookName Column -->
       <ng-container matColumnDef="BookName">
-        <mat-header-cell *matHeaderCellDef> BookName </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> BookName </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.bookName | textShrink: 15}} </mat-cell>
       </ng-container>
 
-      //'Yazar', 'YayınEvi', 'Gün', 'Ay', 'Yıl'
-
       <!--  yazar -->
       <ng-container matColumnDef="Yazar">
-        <mat-header-cell *matHeaderCellDef> Yazar </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Yazar </mat-header-cell>
         <mat-cell *matCellDef="let element" [style.color]="'#' + '0000ff'"> {{element.author}} </mat-cell>
       </ng-container>
 
       <!-- yayınevi -->
       <ng-container matColumnDef="YayınEvi">
-        <mat-header-cell *matHeaderCellDef> YayınEvi </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> YayınEvi </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.publishedBy | textShrink:15}} </mat-cell>
       </ng-container>
 

@@ -23,6 +23,7 @@ import {GraphicsComponent} from "./graphics/graphics.component";
 import {MatCardModule} from "@angular/material/card";
 import {ClimatesComponent} from "./climates/climates.component";
 import { HighchartsChartModule } from 'highcharts-angular';
+import {MatSortModule} from "@angular/material/sort";
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
     MatButtonModule,
     HighchartsChartModule,
     MatCheckboxModule,
+    MatSortModule,
     MatInputModule,
     CdkTableModule,
     CdkTreeModule,

@@ -1,11 +1,11 @@
-import {Component, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, ViewChild} from '@angular/core';
 import { ClimateService } from 'src/app/services/climate.service';
 import {Observable, Subject, combineLatest, from, of} from 'rxjs';
 import {map, takeUntil} from "rxjs/operators";
 import {MatCheckboxChange} from "@angular/material/checkbox";
 import * as _ from 'lodash';
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import {MatTableDataSource} from "@angular/material/table";
+import { MatSort, MatTableDataSource} from "@angular/material";
 
 export interface Climate {
   id?: number;
@@ -54,7 +54,7 @@ export class ClimatesComponent implements OnDestroy {
 
   public _endSubscriptions$: Subject<boolean> = new Subject();
 
-  columnsToDisplay: string[] = ['#', 'Text', 'Place', 'Date', 'PageNumber', 'BookName', 'Yazar', 'YayınEvi', 'Yıl', 'Ay', 'Gün'];
+  columnsToDisplay: string[] = ['#', 'text', 'place', 'date', 'PageNumber', 'BookName', 'Yazar', 'YayınEvi', 'Yıl', 'Ay', 'Gün'];
 
   dataSource: MatTableDataSource<Climate>;
 
@@ -62,12 +62,11 @@ export class ClimatesComponent implements OnDestroy {
 
   dataFromService: Climate[] = [];
 
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   /**
    * Observable of the account state.
    *
-   * @type {Observable<AccountModel>}
-   * @memberof AccountSystemHandler
    */
   public climates$: Observable<Climate[]> = this.climateService.getClimates()
     .pipe(
@@ -78,15 +77,27 @@ export class ClimatesComponent implements OnDestroy {
   monthCheck: boolean = undefined;
   dayCheck: boolean = undefined;
 
-  public yearFilter$: Observable<Climate[]> = of(this.dataFromService);
-  public monthFilter$: Observable<Climate[]> = of(this.dataFromService);
-  public dayFilter$: Observable<Climate[]> = of(this.dataFromService);
+  public yearFilter$: Observable<Climate[]>;
+  public monthFilter$: Observable<Climate[]>;
+  public dayFilter$: Observable<Climate[]>;
+
 
   constructor(private climateService: ClimateService) {
     this.climates$.subscribe(data => {
       this.dataSource = new MatTableDataSource<Climate>(data);
       this.dataFromService = data;
+
+      this.addSort();
+
+      this.yearFilter$ = of(this.dataFromService);
+      this.monthFilter$ = of(this.dataFromService);
+      this.dayFilter$ = of(this.dataFromService);
+
     });
+  }
+
+  public addSort(): void {
+    this.dataSource.sort = this.sort;
   }
 
   public ngOnDestroy(): void {
@@ -135,4 +146,18 @@ export class ClimatesComponent implements OnDestroy {
     filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     this.dataSource.filter = filterValue;
   }
+
+  showSameDates() {
+
+    var valueArr = this.dataFromService.map(function(item){ return item.date });
+
+    let duplicate = valueArr.reduce((acc,currentValue,index, array) => {
+      if(array.indexOf(currentValue)!=index || (array.indexOf(currentValue)==index && array.indexOf(currentValue, array.indexOf(currentValue) + 1) !== -1 )) {
+        acc.push(this.dataFromService[index]);
+      }
+      return acc;
+    }, []);
+    this.dataSource.data = duplicate;
+  }
+
 }
