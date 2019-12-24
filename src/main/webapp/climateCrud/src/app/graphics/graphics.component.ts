@@ -26,7 +26,6 @@ yearExist: true
   templateUrl: './graphics.component.html',
 })
 export class GraphicsComponent implements OnDestroy {
-  title = 'IKLIM PROJESI';
 
   public _endSubscriptions$: Subject<boolean> = new Subject();
 
@@ -197,7 +196,7 @@ export class GraphicsComponent implements OnDestroy {
 
     for (let [key, value] of this.bookNameMap) {
       graphData.push({
-        name: key,
+        name: key + ' - (' + value + ')',
         y: (value / this.climates.length) * 100
       })
     }
