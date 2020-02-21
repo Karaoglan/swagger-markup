@@ -18,6 +18,7 @@ public class ClimateDetail {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Date date;
+    private String originalDate;
     @Column(length = 10000)
     private String text;
     private String place;

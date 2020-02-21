@@ -101,6 +101,8 @@ public class SeleniumTest {
 
     private void readExcel() {
 
+        repository.deleteAll();
+
         File[] files = new File(SHEETS_PATH).listFiles();
         //If this pathname does not denote a directory, then listFiles() returns null.
 
@@ -199,6 +201,7 @@ public class SeleniumTest {
 
                     ClimateDetail climateDetail = ClimateDetail.builder()
                         .date(rowDate)
+                        .originalDate(dateCell.getStringCellValue())
                         .author(authorCell)
                         .bookName(bookNameCell)
                         .pageNumber(pageNumberCell)

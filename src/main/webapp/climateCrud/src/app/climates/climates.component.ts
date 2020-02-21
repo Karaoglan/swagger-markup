@@ -12,6 +12,7 @@ export interface Climate {
   author?: string;
   bookName: string;
   date: string;
+  originalDate: string;
   dayExist?: boolean;
   monthExist?: boolean;
   pageNumber: string;
@@ -20,22 +21,6 @@ export interface Climate {
   text: string;
   yearExist?: boolean;
 }
-
-/*
-author: "Federico Gravina"
-bookName: "İstanbul’ un Anlatımı"
-date: "1788-05-08"
-dayExist: true
-id: 1
-monthExist: true
-pageNumber: "26"
-place: "İstanbul"
-publishedBy: "YKY"
-publishedDate: "2008"
-text: "... ‘Veba hastalığının aşırı salgın halde değilse de başkentte sürdüğünü ... ‘"
-yearExist: true
-
- */
 
 @Component({
   selector: 'app-climates',
@@ -54,7 +39,7 @@ export class ClimatesComponent implements OnDestroy {
 
   public _endSubscriptions$: Subject<boolean> = new Subject();
 
-  columnsToDisplay: string[] = ['#', 'text', 'place', 'date', 'PageNumber', 'BookName', 'Yazar', 'YayınEvi', 'Yıl', 'Ay', 'Gün'];
+  columnsToDisplay: string[] = ['#', 'text', 'place', 'date', 'originalDate', 'PageNumber', 'BookName', 'Yazar', 'YayınEvi', 'Yıl', 'Ay', 'Gün'];
 
   dataSource: MatTableDataSource<Climate>;
 
@@ -82,6 +67,39 @@ export class ClimatesComponent implements OnDestroy {
   public dayFilter$: Observable<Climate[]>;
 
 
+  hicriMonthMap: Map<string, string> = new Map<string, string>();
+
+  public fillHicriMonthMap(): void {
+    this.hicriMonthMap.set('M', 'MUHARREM');
+    this.hicriMonthMap.set('S', 'SAFER');
+    this.hicriMonthMap.set('RA', 'RABIULEVVEL');
+    this.hicriMonthMap.set('R', 'RABIULAHIR');
+    this.hicriMonthMap.set('CA', 'CEMAZIYELEVVEL');
+    this.hicriMonthMap.set('C', 'CEMAZIYELAHIR');
+    this.hicriMonthMap.set('B', 'RECEP');
+    this.hicriMonthMap.set('Ş', 'ŞABAN');
+    this.hicriMonthMap.set('N', 'RAMAZAN');
+    this.hicriMonthMap.set('L', 'SEVVAL');
+    this.hicriMonthMap.set('ZA', 'ZILKADE');
+    this.hicriMonthMap.set('Z', 'ZILHICCE');
+  }
+
+  /**
+   *
+   MUHARREM("1", "M"),
+   SAFER("2", "S"),
+   RABIULEVVEL("3", "RA"),
+   RABIULAHIR("4", "R"),
+   CEMAZIYELEVVEL("5", "CA"),
+   CEMAZIYELAHIR("6", "C"),
+   RECEP("7", "B"),
+   SABAN("8", "Ş"),
+   RAMAZAN("9", "N"),
+   SEVVAL("10", "L"),
+   ZILKADE("11", "ZA"),
+   ZILHICCE("12", "Z");
+   */
+
   constructor(private climateService: ClimateService) {
     this.climates$.subscribe(data => {
       this.dataSource = new MatTableDataSource<Climate>(data);
@@ -93,7 +111,13 @@ export class ClimatesComponent implements OnDestroy {
       this.monthFilter$ = of(this.dataFromService);
       this.dayFilter$ = of(this.dataFromService);
 
+      this.fillHicriMonthMap();
     });
+  }
+
+  public getFullHicriMonthName(originalDate: string): string {
+    let shortHicriMonth: string = originalDate.split('-')[1];
+    return this.hicriMonthMap.has(shortHicriMonth) ? this.hicriMonthMap.get(shortHicriMonth) : null;
   }
 
   public addSort(): void {
@@ -161,3 +185,19 @@ export class ClimatesComponent implements OnDestroy {
   }
 
 }
+
+/*
+author: "Federico Gravina"
+bookName: "İstanbul’ un Anlatımı"
+date: "1788-05-08"
+dayExist: true
+id: 1
+monthExist: true
+pageNumber: "26"
+place: "İstanbul"
+publishedBy: "YKY"
+publishedDate: "2008"
+text: "... ‘Veba hastalığının aşırı salgın halde değilse de başkentte sürdüğünü ... ‘"
+yearExist: true
+
+ */

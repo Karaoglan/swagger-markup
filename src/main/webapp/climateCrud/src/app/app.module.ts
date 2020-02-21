@@ -24,6 +24,7 @@ import {MatCardModule} from "@angular/material/card";
 import {ClimatesComponent} from "./climates/climates.component";
 import { HighchartsChartModule } from 'highcharts-angular';
 import {MatSortModule} from "@angular/material/sort";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import {MatSortModule} from "@angular/material/sort";
     HttpClientModule,
     MatIconModule,
     MatCardModule,
+    MatTooltipModule,
     MatTableModule,
     MatButtonModule,
     HighchartsChartModule,

@@ -54,6 +54,12 @@
         <mat-cell *matCellDef="let element" [style.color]="'#' + '0000ff'"> {{element.date}} </mat-cell>
       </ng-container>
 
+      <!-- Date Column -->
+      <ng-container matColumnDef="originalDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Original Date </mat-header-cell>
+        <mat-cell matTooltip="{{getFullHicriMonthName(element.originalDate)}}" *matCellDef="let element" [style.color]="'#' + 'FF0000'"> {{element.originalDate}} </mat-cell>
+      </ng-container>
+
       <!-- pagenr Column -->
       <ng-container matColumnDef="PageNumber">
         <mat-header-cell *matHeaderCellDef mat-sort-header> PageNr </mat-header-cell>
