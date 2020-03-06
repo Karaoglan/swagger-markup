@@ -18,6 +18,7 @@ export interface Climate {
   pageNumber: string;
   place: string;
   publishedBy?: string;
+  weatherTags?: string;
   text: string;
   yearExist?: boolean;
 }
@@ -39,7 +40,7 @@ export class ClimatesComponent implements OnDestroy {
 
   public _endSubscriptions$: Subject<boolean> = new Subject();
 
-  columnsToDisplay: string[] = ['#', 'text', 'place', 'date', 'originalDate', 'PageNumber', 'BookName', 'Yazar', 'YayınEvi', 'Yıl', 'Ay', 'Gün'];
+  columnsToDisplay: string[] = ['#', 'text', 'place', 'date', 'originalDate', 'pageNumber', 'bookName', 'author', 'publisher', 'year', 'month', 'day', 'weatherTags'];
 
   dataSource: MatTableDataSource<Climate>;
 
@@ -84,6 +85,18 @@ export class ClimatesComponent implements OnDestroy {
     this.hicriMonthMap.set('Z', 'ZILHICCE');
   }
 
+  //wi wi-day-sunny
+
+  weatherTagsMap: Map<string, string> = new Map<string, string>();
+
+  public fillWeatherTagMap(): void {
+    this.weatherTagsMap.set('rüzgar', 'wi wi-windy');
+    this.weatherTagsMap.set('yağmur', 'wi wi-rain');
+    this.weatherTagsMap.set('yangın', 'wi wi-fire');
+    this.weatherTagsMap.set('veba', 'wi wi-alien'); //todo icon bul
+    this.weatherTagsMap.set('güneş', 'wi wi-day-sunny');
+  }
+
   /**
    *
    MUHARREM("1", "M"),
@@ -112,12 +125,17 @@ export class ClimatesComponent implements OnDestroy {
       this.dayFilter$ = of(this.dataFromService);
 
       this.fillHicriMonthMap();
+      this.fillWeatherTagMap();
     });
   }
 
   public getFullHicriMonthName(originalDate: string): string {
     let shortHicriMonth: string = originalDate.split('-')[1];
     return this.hicriMonthMap.has(shortHicriMonth) ? this.hicriMonthMap.get(shortHicriMonth) : null;
+  }
+
+  public getWeatherTagClass(tag: string): string {
+    return this.weatherTagsMap.get(tag);
   }
 
   public addSort(): void {
