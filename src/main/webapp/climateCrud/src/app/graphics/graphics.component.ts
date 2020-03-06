@@ -121,7 +121,7 @@ export class GraphicsComponent implements OnDestroy {
 
       let title: Title = {
         media: {
-          url: "https://lh3.googleusercontent.com/proxy/ehJLmf3k83E5uCMlTOoAsWZ3ZDGk0lTJEXqGDVoQ0NtSaQEW1MobfQX5Ch4xBqygvhpHSFUxS94ZK3whNZITi-SUP5R6E_0vrlSkQBdE85l-z588wfQjTvZ44mpE9vFkQIVdoMOYSw",
+          url: "../assets/istanbul1.jpg",
           caption: "Ortaköy Camii 1800' ler",
           credit: "google/<a href='https://lh3.googleusercontent.com/proxy/ehJLmf3k83E5uCMlTOoAsWZ3ZDGk0lTJEXqGDVoQ0NtSaQEW1MobfQX5Ch4xBqygvhpHSFUxS94ZK3whNZITi-SUP5R6E_0vrlSkQBdE85l-z588wfQjTvZ44mpE9vFkQIVdoMOYSw'>ortaköy</a>"
         },
