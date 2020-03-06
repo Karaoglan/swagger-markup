@@ -1706,3 +1706,6 @@ Caused by: java.lang.IllegalStateException: The file is locked: nio:/Users/bk/de
 	at org.h2.mvstore.FileStore.open(FileStore.java:172)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:390)
 	... 84 more
+2020-03-06 09:55:23 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column """WEATHER_TAGS"" VARCHAR(255)": "STRINGDECODE('NOT:\"" Kitapta ad\u0131 ge\u00e7en ay isimlerini a\u015fa\u011f\u0131daki s\u0131raya g\u00f6re de\u011ferlendirme... (511)"; SQL statement:
+insert into climate_detail (author, book_name, date, day_exist, month_exist, original_date, page_number, place, published_by, published_date, text, weather_tags, year_exist, id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) [22001-199]

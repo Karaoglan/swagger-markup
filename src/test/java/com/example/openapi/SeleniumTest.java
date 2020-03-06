@@ -143,6 +143,7 @@ public class SeleniumTest {
                     String authorCell = formatter.formatCellValue(row.getCell(5)); // Get the Cell at the Index / Column you want.
                     String publishedByCell = formatter.formatCellValue(row.getCell(6)); // Get the Cell at the Index / Column you want.
                     String publishedDateCell = formatter.formatCellValue(row.getCell(7)); // Get the Cell at the Index / Column you want.
+                    String weatherTags = formatter.formatCellValue(row.getCell(8));
 
                     String[] date;
 
@@ -209,6 +210,7 @@ public class SeleniumTest {
                         .publishedBy(publishedByCell)
                         .publishedDate(publishedDateCell)
                         .text(textCell)
+                        .weatherTags(weatherTags)
                         .dayExist(dayExist)
                         .monthExist(monthExist)
                         .yearExist(yearExist).build();

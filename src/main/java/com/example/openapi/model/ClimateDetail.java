@@ -27,6 +27,7 @@ public class ClimateDetail {
     private String author;
     private String publishedBy;
     private String publishedDate;
+    private String weatherTags;
     private boolean yearExist;
     private boolean monthExist;
     private boolean dayExist;

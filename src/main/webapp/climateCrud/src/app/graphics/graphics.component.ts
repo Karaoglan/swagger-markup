@@ -41,6 +41,7 @@ export class GraphicsComponent implements OnDestroy {
     {
       "id": 1,
       "date": "1788-05-08",
+      "originalDate": "1788-05-08",
       "text": "... ‘Veba hastalığının aşırı salgın halde değilse de başkentte sürdüğünü ‘",
       "place": "İstanbul",
       "pageNumber": "26",
@@ -54,6 +55,7 @@ export class GraphicsComponent implements OnDestroy {
     {
       "id": 2,
       "date": "1788-05-31",
+      "originalDate": "1788-05-08",
       "text": "31 Mayıs’ ta İspanya temsılcısı sıcakla birlikte Frenk mahallesinde vebanın daha da yayıldığını...",
       "place": "İstanbul",
       "pageNumber": "35",
@@ -67,6 +69,7 @@ export class GraphicsComponent implements OnDestroy {
     {
       "id": 3,
       "date": "1788-06-04",
+      "originalDate": "1788-05-08",
       "text": "... gece bastırırken Galata’ da 5 kişinin vebadan öldğğünü öğrendikleri Pera’ ya döndüler.",
       "place": "İstanbul/Galata",
       "pageNumber": "36",
@@ -80,6 +83,7 @@ export class GraphicsComponent implements OnDestroy {
     {
       "id": 4,
       "date": "1788-06-08",
+      "originalDate": "1788-05-08",
       "text": "8 Haziran’ da hareketi olanasızlaştıracak derecee güney rüzgarı etili oldu. ",
       "place": "İstanbul/Galata",
       "pageNumber": "36",
@@ -93,6 +97,7 @@ export class GraphicsComponent implements OnDestroy {
     {
       "id": 5,
       "date": "1788-06-08",
+      "originalDate": "1788-05-08",
       "text": "8 Haziran’ da hareketi olanasızlaştıracak derecee güney rüzgarı etili oldu. ",
       "place": "İstanbul/Galata",
       "pageNumber": "36",
