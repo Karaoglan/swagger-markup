@@ -183,7 +183,7 @@ export class GraphicsComponent implements OnDestroy {
         })
       });
 
-      new TL.Timeline('timeline-embed', newJson);
+      new Timeline('timeline-embed', newJson);
     });
   }
 
