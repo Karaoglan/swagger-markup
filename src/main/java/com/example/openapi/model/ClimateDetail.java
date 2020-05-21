@@ -19,6 +19,7 @@ public class ClimateDetail {
     private Long id;
     private Date date;
     private String originalDate;
+    private String rangeEndDate;
     @Column(length = 10000)
     private String text;
     private String place;

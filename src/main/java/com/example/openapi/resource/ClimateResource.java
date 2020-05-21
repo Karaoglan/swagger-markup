@@ -23,7 +23,7 @@ public class ClimateResource {
   }
 
   @GetMapping("/climates")
-  public ResponseEntity<List<ClimateDetail>> getAllUsers() {
+  public ResponseEntity<List<ClimateDetail>> getAllClimates() {
     final List<ClimateDetail> list = service.getClimates();
     return new ResponseEntity<>(list, HttpStatus.OK);
   }

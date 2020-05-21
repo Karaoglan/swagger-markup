@@ -19,7 +19,7 @@ public class ClimateService {
 
   public List<ClimateDetail> getClimates() {
     List<ClimateDetail> list = new ArrayList<>();
-    repository.findAll().forEach(item -> {
+    repository.findByOrderByDateAsc().forEach(item -> {
       list.add(item);
       if (map.get(item.getDate()) != null) {
         map.put(item.getDate(), map.get(item.getDate()));

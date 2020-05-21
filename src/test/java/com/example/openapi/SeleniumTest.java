@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,6 +37,7 @@ public class SeleniumTest {
     @Autowired
     private ClimateDetailRepository repository;
 
+    public static final int RANGE_OF_DATES = 6;
     @Value("${geckodriver.path}")
     private String driverPath;
 
@@ -51,6 +51,10 @@ public class SeleniumTest {
     private static String YEAR;
     private static String MONTH;
     private static String DAY;
+
+    private static String YEAR_RANGE_END;
+    private static String MONTH_RANGE_END;
+    private static String DAY_RANGE_END;
 
 
     private WebDriver driver;
@@ -108,6 +112,9 @@ public class SeleniumTest {
 
         System.out.println("number of files: " + files.length);
         for (File filePath : files) {
+            if (filePath.getName().contains("DS_Store")) {
+                continue;
+            }
             System.out.println("current file: " + filePath.getName());
             try {
                 FileInputStream file = new FileInputStream(SHEETS_PATH + "/" + filePath.getName());
@@ -145,22 +152,46 @@ public class SeleniumTest {
                     String publishedDateCell = formatter.formatCellValue(row.getCell(7)); // Get the Cell at the Index / Column you want.
                     String weatherTags = formatter.formatCellValue(row.getCell(8));
 
-                    String[] date;
+                    String[] date = null;
 
                     try {
                         date = dateCell.getStringCellValue().split("-");
+                        if (date.length == 1 && date[0] == "")
+                            throw new NullPointerException("EOF No more rows");
                     } catch (NullPointerException e) {
                         // EOF
                         break;
-                    }
-
-                    if (date.length == 1 && date[0] == "") {
-                        break;
+                    } catch (IllegalStateException e) {
+                        dateCell.getDateCellValue();
                     }
 
                     YEAR = date[0].trim();
                     MONTH = date[1].trim();
                     DAY = date[2].trim();
+
+                    String rangeEndDate = null;
+
+                    // TODO hicriye bak range için ve range şu an tüm tarih verileri verilirse çalışır
+                    if (date.length == RANGE_OF_DATES) {
+
+                        rangeEndDate = date[3].trim() + "-" +
+                        date[4].trim() + "-" + date[5].trim();
+
+                        /*YEAR_RANGE_END = date[3].trim();
+                        MONTH_RANGE_END = date[4].trim();
+                        DAY_RANGE_END = date[5].trim();
+
+
+
+                        Calendar cal = Calendar.getInstance();
+
+                        cal.set(Calendar.YEAR, Integer.parseInt(YEAR_RANGE_END));
+                        cal.set(Calendar.MONTH, Integer.parseInt(MONTH_RANGE_END) - 1);
+                        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(DAY_RANGE_END));
+
+                        rangeEndDate = new Date(cal.getTimeInMillis());*/
+                    }
+
 
                     boolean dayExist = !DAY.contains(QUESTION_MARK);
                     boolean monthExist = !MONTH.contains(QUESTION_MARK);
@@ -177,9 +208,6 @@ public class SeleniumTest {
                     if (isHicriYear && dayExist && monthExist && yearExist) {
                         callWebsite();
                     }
-
-                    SimpleDateFormat sdf = new SimpleDateFormat(
-                        "yyyy-MM-dd");
 
                     Calendar cal = Calendar.getInstance();
 
@@ -204,6 +232,7 @@ public class SeleniumTest {
                         .date(rowDate)
                         .originalDate(dateCell.getStringCellValue())
                         .author(authorCell)
+                        .rangeEndDate(rangeEndDate)
                         .bookName(bookNameCell)
                         .pageNumber(pageNumberCell)
                         .place(placeCell)
